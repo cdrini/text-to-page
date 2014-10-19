@@ -37,12 +37,14 @@
         document.getElementsByClassName("pages")[0].contentEditable=true;
         var opts = { fontFamily:"Roboto" };
         var form = document.forms["parameters"];
+        var pagesObj = new Pages();
+        pagesObj.init();
         form.addEventListener("submit", function(ev) {
           ev.preventDefault();
           var content = form.elements["content"].value;
           var width = form.elements["width"].value;
           var height = form.elements["height"].value;
-          (new Pages).init(content, width, height, opts);
+          pagesObj.update(content, width, height, opts);
         });
       });
     </script>

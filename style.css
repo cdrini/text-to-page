@@ -41,9 +41,10 @@
   
   transform:scale(0.3);
   transform-origin:0 0;
+  transition:all 0.2s;
 }
 
-.text {
+.content {
   margin:20px;
   font-family:Roboto;
   font-size:10px;
