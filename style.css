@@ -1,0 +1,56 @@
+.pages {
+  text-align:center;
+}
+
+.page-wrapper {
+  position:relative;
+  display:inline-block;
+  width:330px;
+  margin-top:20px;
+  text-align:left;
+  padding:0 10px;
+  margin-right:20px;
+}
+
+.page-wrapper .metadata.width,
+.page-wrapper .metadata.height {
+  text-align:center;
+  font-weight:bold;
+  font-size:16px;
+  font-family:sans-serif;
+}
+
+.page-wrapper .metadata.height {
+  transform:rotate(90deg);
+  transform-origin:0;
+  position:absolute;
+  left:101%;
+  top:30%;
+}
+
+.page-wrapper .postdata {
+  margin-top:10px;
+  padding-left:5px;
+}
+
+.page {
+  position: relative;
+  
+  border: 1px solid black;
+  box-shadow: 8px 8px;
+  
+  transform:scale(0.3);
+  transform-origin:0 0;
+}
+
+.text {
+  margin:20px;
+  font-family:Roboto;
+  font-size:10px;
+  text-align:justify;
+}
+
+.parameters {
+  max-width:960px;
+  margin:auto;
+}
