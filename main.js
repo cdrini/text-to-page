@@ -1,97 +1,132 @@
-// REQUIRES he.js for security
+// REQUIRES he.js to script injection
 window.PAGE_SCALE_FACTOR = 0.3;
+
+
 
 function Pages() {
   var self = this;
-  function Page(content, width, height, opts) {
+  
+  function Page(content, userOpts) {
     var self = this;
-    // Parameter default values
-    this.opts = opts || {};
-    this.opts.fontSize = opts.fontSize || 12;
-    this.opts.fontFamily = opts.fontFamily || "Times New Roman";
-    this.width = width || "8.5in";
-    this.height = height || "11in";
-    this.content = content || "";
-    this.content = he.encode(this.content);
-
-    this.pageStyle = {
-      width: self.width,
-      height: self.height
+    
+    // Default Options
+    var opts = {
+      title: "",
+      fontSize: 12,
+      fontFamily: "Times New Roman",
+      width: "8.5in",
+      height: "11in"
     };
-    this.pageStyle["margin-bottom"] = parseFloat(this.height)*-(1-PAGE_SCALE_FACTOR) + this.height.slice(-2);
+    if(typeof userOpts !== 'undefined') {
+      for(var o in opts) {
+        if(typeof userOpts[o] !== 'undefined') {
+          opts[o] = userOpts[o];
+        }
+      }
+    }
+    if(typeof content === 'undefined') {
+      content = "";
+    }
+    content = he.encode(content);
 
-    this.textStyle = {
-      "font-family": self.opts.fontFamily,
-      "font-size": self.opts.fontSize
+    var pageStyle = {
+      width: opts.width,
+      height: opts.height
+    };
+    pageStyle["margin-bottom"] = parseFloat(opts.height)*-(1-PAGE_SCALE_FACTOR) + opts.height.slice(-2);
+
+    var textStyle = {
+      "font-family": opts.fontFamily,
+      "font-size": opts.fontSize
     };
 
-    this.stats = stringStats(this.content);
+    var stats = stringStats(content);
 
-    this.elem = document.createElement('div');
-    this.elem.setAttribute("class", "page-wrapper");
-    this.elem.style.width = parseFloat(this.width)*PAGE_SCALE_FACTOR + this.height.slice(-2);
-    this.elem.innerHTML = '<div class="metadata width">' + this.width + '</div>\
-<div class="metadata height">' + this.height + '</div>\
-<div class="page" style="' + ObjectToString(this.pageStyle) + '">\
-  <div class="content" style="' + ObjectToString(this.textStyle) + '">' + this.content + '</div>\
+    var elem = document.createElement('div');
+    elem.setAttribute("class", "page-wrapper");
+    elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.height.slice(-2);
+    elem.innerHTML =
+'<div class="metadata width">' + opts.width + '</div>\
+<div class="metadata height">' + opts.height + '</div>\
+<div class="page" style="' + ObjectToString(pageStyle) + '">\
+  <div class="content" style="' + ObjectToString(textStyle) + '">' + content + '</div>\
 </div>\
 <div class="postdata">\
-  <div class="metadata title">FEDs Midterm Check-in Infographic</div>\
-  <div class="metadata word-count">' + this.stats +'</div>\
-  <div class="metadata font">' + this.textStyle["font-family"] + ', ' + this.textStyle["font-size"] + '</div>\
+  <div class="metadata title">' + opts.title + '</div>\
+  <div class="metadata word-count">' + stats +'</div>\
+  <div class="metadata font">' + textStyle["font-family"] + ', ' + textStyle["font-size"] + '</div>\
           </div>';
-    this.elem.content = this.elem.getElementsByClassName('content')[0];
-    this.elem.page = this.elem.getElementsByClassName('page')[0];
-    this.elem.metadata = {
-      width: this.elem.getElementsByClassName('width')[0],
-      height: this.elem.getElementsByClassName('height')[0],
-      title: this.elem.getElementsByClassName('title')[0],
-      wordCount: this.elem.getElementsByClassName('word-count')[0],
-      font: this.elem.getElementsByClassName('font')[0]
+    elem.content = elem.querySelector('.content');
+    elem.page = elem.querySelector('.page');
+    elem.metadata = {
+      width: elem.querySelector('.width'),
+      height: elem.querySelector('.height'),
+      title: elem.querySelector('.title'),
+      wordCount: elem.querySelector('.word-count'),
+      font: elem.querySelector('.font')
     }
+    this.elem = elem;
     
-    this.update = function(content, width, height, opts) {
-      this.width = width || this.width;
-      this.height = height || this.height;
-      if(width || height) {
-        this.elem.style.width = parseFloat(this.width)*PAGE_SCALE_FACTOR + this.height.slice(-2);
-        this.elem.page.style.width = this.width;
-        this.elem.metadata.width.innerHTML = this.width;
-        this.elem.page.style.height = this.height;
-        this.elem.metadata.height.innerHTML = this.height;
-        this.elem.page.style.marginBottom = parseFloat(this.height)*-(1-PAGE_SCALE_FACTOR) + this.height.slice(-2);
+    this.update = function(newContent, newOpts) {
+      var dimensionsChanged = false;
+      if(typeof newOpts !== 'undefined') {
+        for(var o in opts) {
+          if(typeof newOpts[o] !== 'undefined') {
+            if((o === 'width' || o === 'height') && newOpts[o] !== opts[o]) {
+              dimensionsChanged = true;
+            }
+            opts[o] = newOpts[o];
+          }
+        }
+        textStyle = {
+          "font-family": opts.fontFamily,
+          "font-size": opts.fontSize
+        };
+        elem.metadata.font.innerHTML = textStyle["font-family"] + ', ' + textStyle["font-size"];
+        elem.content.style = ObjectToString(textStyle);
+      }
+      if(dimensionsChanged) {
+        elem.metadata.title.innerHTML = opts.title;
+        elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.height.slice(-2);
+        elem.page.style.width = opts.width;
+        elem.metadata.width.innerHTML = opts.width;
+        elem.page.style.height = opts.height;
+        elem.metadata.height.innerHTML = opts.height;
+        elem.page.style.marginBottom = parseFloat(opts.height)*-(1-PAGE_SCALE_FACTOR) + opts.height.slice(-2);
         
       }
       
-      if(opts) {
-        for (var attr in opts) {
-          this.opts[attr] = opts[attr];
-        }
-        this.textStyle = {
-          "font-family": self.opts.fontFamily,
-          "font-size": self.opts.fontSize
-        };
-        this.elem.metadata.font.innerHTML = this.textStyle["font-family"] + ', ' + this.textStyle["font-size"];
-        this.elem.content.style = ObjectToString(this.textStyle);
-      }
-      
-      if(content || content === "") {
-        this.content = he.encode(content);
-        this.stats = stringStats(this.content);
-        this.elem.content.innerHTML = this.content;
-        this.elem.metadata.wordCount.innerHTML = this.stats;
+      if(newContent || newContent === "") {
+        content = he.encode(newContent);
+        stats = stringStats(newContent);
+        elem.content.innerHTML = newContent;
+        elem.metadata.wordCount.innerHTML = stats;
       }
     };
 
   }
   
-  this.pages = [];
-  this.init = function(content, width, height, opts) {
-    this.opts = opts || {};
-    this.opts.fontSizes = this.opts.fontSizes || [12,11,10];
+  var pages = [];
+  
+    // Default Options
+    var opts = {
+      title: "",
+      fontSizes: [12,11,10],
+      fontFamily: "Times New Roman",
+      width: "8.5in",
+      height: "11in"
+    };
+  this.init = function(content, userOpts) {
+    if(typeof userOpts !== 'undefined') {
+      for(var o in opts) {
+        if(typeof userOpts[o] !== 'undefined') {
+          opts[o] = userOpts[o];
+        }
+      }
+    }
     
-    this.update(content, width, height);
-    return;
+    self.update(content, opts);
+    /*
     for (var i=0; i < this.opts.fontSizes.length; i++) {
       var pageOpts = this.opts;
       pageOpts.fontSize = this.opts.fontSizes[i]+"px";
@@ -99,25 +134,29 @@ function Pages() {
       self.pages.push(page);
       document.getElementsByClassName("pages")[0].appendChild(page.elem);
     }
+    */
     
   };
   
-  this.update = function(content, width, height, opts) {
-    if (opts) {
-      for(var attr in opts) {
-        this.opts[attr] = opts[attr];
+  this.update = function(content, newOpts) {
+    if(typeof newOpts !== 'undefined') {
+      for(var o in opts) {
+        if(typeof newOpts[o] !== 'undefined') {
+          opts[o] = newOpts[o];
+        }
       }
     }
     
-    for (var i=0; i < this.opts.fontSizes.length; i++) {
-      var pageOpts = this.opts;
-      pageOpts.fontSize = this.opts.fontSizes[i]+"px";
-      if (i < this.pages.length) {
-        self.pages[i].update(content, width, height, pageOpts);
+    for (var i=0; i < opts.fontSizes.length; i++) {
+      var pageOpts = opts;
+      // Note a copy HAS NOT been created; this is just an alias
+      pageOpts.fontSize = opts.fontSizes[i]+"px";
+      if (i < pages.length) {
+        pages[i].update(content, pageOpts);
       } else {
-        var page = new Page(content, width, height, pageOpts);
-        self.pages.push(page);
-        document.getElementsByClassName("pages")[0].appendChild(page.elem);
+        var page = new Page(content, pageOpts);
+        pages.push(page);
+        document.querySelector(".pages").appendChild(page.elem);
       }
     }
   };
