@@ -59,9 +59,9 @@ function Pages() {
     elem.content = elem.querySelector('.content');
     elem.page = elem.querySelector('.page');
     elem.metadata = {
+      title: elem.querySelector('.title'),
       width: elem.querySelector('.width'),
       height: elem.querySelector('.height'),
-      title: elem.querySelector('.title'),
       wordCount: elem.querySelector('.word-count'),
       font: elem.querySelector('.font')
     }
@@ -84,9 +84,10 @@ function Pages() {
         };
         elem.metadata.font.innerHTML = textStyle["font-family"] + ', ' + textStyle["font-size"];
         elem.content.style = ObjectToString(textStyle);
-      }
-      if(dimensionsChanged) {
         elem.metadata.title.innerHTML = opts.title;
+      }
+      
+      if(dimensionsChanged) {
         elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.height.slice(-2);
         elem.page.style.width = opts.width;
         elem.metadata.width.innerHTML = opts.width;
