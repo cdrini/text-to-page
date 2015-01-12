@@ -1,4 +1,3 @@
-// REQUIRES he.js to script injection
 window.PAGE_SCALE_FACTOR = 0.3;
 
 
@@ -20,14 +19,14 @@ function Pages() {
     if(typeof userOpts !== 'undefined') {
       for(var o in opts) {
         if(typeof userOpts[o] !== 'undefined') {
-          opts[o] = userOpts[o];
+          opts[o] = encodeStr(userOpts[o]);
         }
       }
     }
     if(typeof content === 'undefined') {
       content = "";
     }
-    content = he.encode(content);
+    content = encodeStr(content);
 
     var pageStyle = {
       width: opts.width,
@@ -75,7 +74,7 @@ function Pages() {
             if((o === 'width' || o === 'height') && newOpts[o] !== opts[o]) {
               dimensionsChanged = true;
             }
-            opts[o] = newOpts[o];
+            opts[o] = encodeStr(newOpts[o]);
           }
         }
         textStyle = {
@@ -98,9 +97,9 @@ function Pages() {
       }
       
       if(newContent || newContent === "") {
-        content = he.encode(newContent);
+        content = encodeStr(newContent);
         stats = stringStats(newContent);
-        elem.content.innerHTML = newContent;
+        elem.content.innerHTML = content;
         elem.metadata.wordCount.innerHTML = stats;
       }
     };
@@ -121,7 +120,7 @@ function Pages() {
     if(typeof userOpts !== 'undefined') {
       for(var o in opts) {
         if(typeof userOpts[o] !== 'undefined') {
-          opts[o] = userOpts[o];
+          opts[o] = encodeStr(userOpts[o]);
         }
       }
     }
@@ -169,6 +168,17 @@ function ObjectToString(obj) {
     result += property + ': ' + obj[property]+'; ';
   }
   return result;
+}
+
+function encodeStr(str) {
+  // src: http://stackoverflow.com/a/18750001/2317712
+  if(typeof str !== 'string') {
+    return str;
+  }
+  var encodedStr = str.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+    return '&#'+i.charCodeAt(0)+';';
+  });
+  return encodedStr;
 }
 
 function stringStats(str) {
