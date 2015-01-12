@@ -3,7 +3,8 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="css/style.css" />  
+    <link rel="stylesheet" href="css/style.css" />
+    <title>text-to-page</title>
   </head>
   
   <body>
@@ -22,6 +23,12 @@
     <div class="pages">
     </div>
     
+    
+    <script>
+      if(!window.addEventListener) {
+        document.body.innerHTML = 'Unfortunately your browser isn\'t supported. Go to the <a href="https://github.com/cdrini/text-to-page">Github page</a> for this project.';
+      }
+    </script>
     <script src="javascript/main.js"></script>
     <script>
       window.addEventListener("load", function() {
