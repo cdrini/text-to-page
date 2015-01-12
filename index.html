@@ -30,14 +30,15 @@
         var form = document.forms["pages-parameters"];
         var pagesObj = new Pages();
         pagesObj.init();
-        form.addEventListener("submit", function(ev) {
+        function update(ev) {
           ev.preventDefault();
           var content = form.elements["content"].value;
           opts.width = form.elements["width"].value;
           opts.height = form.elements["height"].value;
           opts.title = form.elements["title"].value;
           pagesObj.update(content, opts);
-        });
+        }
+        form.addEventListener("submit", update);
         form.elements["demo"].addEventListener('click', function(ev) {
           ev.preventDefault();
           if (form.elements["content"].value
