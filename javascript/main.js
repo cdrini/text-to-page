@@ -43,7 +43,7 @@ function Pages() {
 
     var elem = document.createElement('div');
     elem.setAttribute("class", "page-wrapper");
-    elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.height.slice(-2);
+    elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.width.slice(-2);
     elem.innerHTML =
 '<div class="metadata width">' + opts.width + '</div>\
 <div class="metadata height">' + opts.height + '</div>\
@@ -87,7 +87,7 @@ function Pages() {
       }
       
       if(dimensionsChanged) {
-        elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.height.slice(-2);
+        elem.style.width = parseFloat(opts.width)*PAGE_SCALE_FACTOR + opts.width.slice(-2);
         elem.page.style.width = opts.width;
         elem.metadata.width.innerHTML = opts.width;
         elem.page.style.height = opts.height;
