@@ -1,9 +1,8 @@
-window.PAGE_SCALE_FACTOR = 0.3;
-
-
-
 function Pages() {
   var self = this;
+  
+  // TODO: Make this an option
+  var PAGE_SCALE_FACTOR = 0.3;
   
   function Page(content, userOpts) {
     var self = this;
@@ -108,14 +107,14 @@ function Pages() {
   
   var pages = [];
   
-    // Default Options
-    var opts = {
-      title: "",
-      fontSizes: [12,11,10],
-      fontFamily: "Times New Roman",
-      width: "8.5in",
-      height: "11in"
-    };
+  // Default Options
+  var opts = {
+    title: "",
+    fontSizes: [12,11,10],
+    fontFamily: "Times New Roman",
+    width: "8.5in",
+    height: "11in"
+  };
   this.init = function(content, userOpts) {
     if(typeof userOpts !== 'undefined') {
       for(var o in opts) {
